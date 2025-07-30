@@ -1,7 +1,6 @@
-// App.js
 import React, { useState } from "react";
 import axios from "axios";
-import "./styles.css"; // Optional, for styling
+import "./styles.css"; // Optional CSS for layout
 
 const App = () => {
   const [users, setUsers] = useState([]);
@@ -13,17 +12,18 @@ const App = () => {
     setError("");
     try {
       const response = await axios.get("https://reqres.in/api/users");
-      const userData = response.data.data;
-      setUsers(userData);
+      const data = response.data?.data || [];
+      setUsers(data);
     } catch (err) {
-      setError("Failed to fetch users. Please try again.");
+      setError("Error fetching users");
+      setUsers([]);
     }
     setLoading(false);
   };
 
   return (
     <div id="main">
-      <h1>User List</h1>
+      <h1>Blue Whales App</h1>
       <button className="btn" onClick={fetchUsers}>Get User List</button>
 
       {loading && <p>Loading...</p>}
@@ -31,7 +31,7 @@ const App = () => {
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {!loading && users.length === 0 && !error && (
-        <p>No users to display.</p>
+        <p>No data found</p>
       )}
 
       {!loading && users.length > 0 && (
