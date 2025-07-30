@@ -1,41 +1,35 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./styles.css"; // Optional CSS for layout
 
 const App = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState(null); // null initially
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const fetchUsers = async () => {
     setLoading(true);
-    setError("");
     try {
-      const response = await axios.get("https://reqres.in/api/users");
-      const data = response.data?.data || [];
-      setUsers(data);
-    } catch (err) {
-      setError("Error fetching users");
-      setUsers([]);
+      const res = await axios.get("https://reqres.in/api/users");
+      setUsers(res.data.data); // array of users
+    } catch (error) {
+      setUsers([]); // treat as no data
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
     <div id="main">
       <h1>Blue Whales App</h1>
-      <button className="btn" onClick={fetchUsers}>Get User List</button>
+      <button className="btn" onClick={fetchUsers}>
+        Get User List
+      </button>
 
       {loading && <p>Loading...</p>}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {!loading && users?.length === 0 && <p>No data found</p>}
 
-      {!loading && users.length === 0 && !error && (
-        <p>No data found</p>
-      )}
-
-      {!loading && users.length > 0 && (
-        <table border="1">
+      {!loading && Array.isArray(users) && users.length > 0 && (
+        <table>
           <thead>
             <tr>
               <th>Avatar</th>
